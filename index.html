@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf8">
+    <title>search</title>
+    <link rel="stylesheet" type="text/css" href="light.css">
+</head>
+
+<body id="body">
+    <div id="page">
+        <div id="search_box">
+            <div id="search_line">
+                <input id="search_input" type="text" value="" placeholder="歌曲搜索">
+                <!--<input id="search_button" type="button" value="搜索" onclick="search_music()">-->
+            </div>
+            <div id="search_event">
+
+            </div>
+        </div>
+        <div id="music_player_box">
+            <audio id="myAudio" controls>
+                <source src="" type="audio/flac">
+            </audio>
+            <div id="music_player_data">
+                <div id="music_player_data_title">
+                    歌曲
+                </div>
+                <div id="music_player_data_artist">
+                    歌手
+                </div>
+            </div>
+            <div id="music_player_lyrics">
+                <div class="container">
+                    <ul class="lrc-list">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="axios.min.js"></script>
+<script src="lyrics.js"></script>
+<script src="main.js"></script>
+
+</html>

@@ -1,0 +1,139 @@
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100vh;
+    background-size: cover; /* 使背景图像覆盖整个容器，可能会裁剪 */
+    background-repeat: no - repeat; /* 不重复 */
+    background-position: center; /* 可将图像居中，根据需要调整位置 */
+    backdrop-filter: blur(20px);
+}
+#page{
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+}
+#search_box{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 70%;
+    height: 100%;
+}
+#search_line{
+    height: 36px;
+    display: flex;
+    align-items: end;
+}
+#search_input{
+    width: 300px;
+    height: 36px;
+    display: flex;
+    text-align: center;
+    font-size: 16px;
+    align-items: center;
+    outline: none;
+    border: none;
+    background-color: rgba(0,0,0,0);
+    border-bottom: 2px solid rgba(30,50,100,0.2);
+}
+.option div{
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background-color: rgba(0,0,0,0.1);
+    margin-top: 15px;
+}
+.page{
+    width:100%;
+    height:600px;
+    border: none;
+}
+#search_event{
+    width: 100%;
+    flex-grow: 1;
+    overflow: auto;
+}
+#music_search_event{
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid rgba(30,50,100,0.2);
+    transition: background-color 0.3s ease;
+}
+#music_search_event:hover{
+    background-color: rgba(0,0,0,0.1);
+}
+.music_search_event_title{
+    width: 33%;
+}
+.music_search_event_text{
+    width: 33%;
+    color: rgba(0,0,0,0.6);
+}
+#music_player_box{
+    display: flex;
+    width: 30%;
+    flex-direction: column;
+}
+#myAudio{
+    width: 100%;
+}
+#music_player_data{
+    height:15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#music_player_data_title{
+    text-align: center;
+    margin-top: 10px;
+    font-size: 26px;
+}
+#music_player_data_artist{
+    text-align: center;
+    margin-top: 15px;
+    color: rgba(0,0,0,0.6);
+}
+#music_playger_lyrics{
+    width: 100px;
+    display: flex;
+    background-color: aqua;
+    justify-content: center;
+}
+.container {
+    height: 600px;
+    overflow: hidden;
+}
+.container ul {
+    transition: 0.6s;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+.container li {
+    color: rgba(0,0,0,0.6);
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    transition: 0.5s;
+}
+.container li.active {
+    text-align: center;
+    color: rgba(0,0,0,1);
+    /* font-size: 40px; */
+    transform: scale(1.1);
+    font-weight: bold;
+}
