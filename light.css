@@ -109,6 +109,7 @@ body{
 }
 #music_playger_lyrics{
     width: 100px;
+    height: 100px;
     display: flex;
     background-color: aqua;
     justify-content: center;
