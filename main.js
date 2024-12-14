@@ -1,5 +1,6 @@
 api_url = 'https://music.api.uxnz.net:6/';
 playing = '';
+cover_images = null;
 
 document.getElementById('search_input').addEventListener('keyup', function (event) {
     if (event.key === 'Enter') {
@@ -18,12 +19,15 @@ function change_music(music_file_name){
         }
     }).then(function(response){
         console.log(response)
-        data=response.data
+        data=response.data;
+        cover_images = data.cover;
         document.getElementById('music_player_data_title').innerHTML = data.title;
         document.getElementById('music_player_data_artist').innerHTML = data.artist;
+        document.getElementById('body').style.backgroundImage = `url("data:image/jpeg;base64,${cover_images}")`;
+        document.getElementById('music_player_data_cover').style.backgroundImage = `url("data:image/jpeg;base64,${cover_images}")`;
         lrc = data.lyrics;
-        load_lyrics();
-        document.getElementById('body').style.backgroundImage = "url('"+api_url+"cover/"+music_file_name+"')"
+        //load_lyrics();
+        //document.getElementById('body').style.backgroundImage = "url('"+api_url+"cover/"+music_file_name+"')"
     })
 }
 function search_music(){
@@ -50,4 +54,16 @@ function search_music(){
         }
         console.log(i);
     })
+}
+
+function control_player(option) {
+    if (option == 'close') {
+        document.getElementById('page_player').style.display = 'none';
+        document.getElementById('page_home').style.display = 'flex';
+    }
+    if (option == 'open'){
+        document.getElementById('page_player').style.display = 'flex';
+        document.getElementById('page_home').style.display = 'none';
+        load_lyrics();
+    }
 }

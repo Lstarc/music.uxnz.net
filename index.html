@@ -10,34 +10,34 @@
 
 <body id="body">
 
-    <div id="page">
-        <div id="search_box">
-            <div id="search_line">
-                <input id="search_input" type="text" value="" placeholder="歌曲搜索">
-                <!--<input id="search_button" type="button" value="搜索" onclick="search_music()">-->
+    <div class="page" id="page_player" style="display: none;">
+        <div id="music_player_meta">
+            
+            <div id="music_player_data_title" onclick="control_player('close')">
+                歌曲
             </div>
-            <div id="search_event">
+            <div id="music_player_data_artist">
+                歌手
+            </div>
+            <div id="music_player_data_cover">
 
             </div>
-        </div>
-        <div id="music_player_box">
             <audio id="myAudio" controls>
                 <source src="" type="audio/flac">
             </audio>
-            <div id="music_player_data">
-                <div id="music_player_data_title">
-                    歌曲
-                </div>
-                <div id="music_player_data_artist">
-                    歌手
-                </div>
-            </div>
-            <div id="music_player_lyrics">
-                <div class="container">
-                    <ul class="lrc-list">
-
-                    </ul>
-                </div>
+        </div>
+        <div id="music_player_lyrics">
+        </div>       
+    </div>
+    <div class="page" id="page_home">
+        <div id="search_box">
+            
+            <div id="search_line">
+                <input id="search_input" type="text" value="" placeholder="歌曲搜索">
+                <!--<input id="search_button" type="button" value="搜索" onclick="search_music()">-->
+                <input type="button" onclick="control_player('open')" value="播放器">
+            </div>            
+            <div id="search_event">
             </div>
         </div>
     </div>
