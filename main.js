@@ -10,6 +10,18 @@ document
         }
     });
 
+function load_images(image_base64){
+    if(image_base64 == ""){
+        image_base64 = `url("data:image/svg+xml;base64,${night_image_base64()}")`;
+    }else{
+        image_base64 = `url("data:image/png;base64,${image_base64}")`;
+    }
+    document.getElementById("body").style.backgroundImage = image_base64;
+    document.getElementById("music_player_data_cover").style.backgroundImage = image_base64;
+    document.getElementById("init_player_cover").style.backgroundImage = image_base64;
+}
+window.onload = load_images("")
+
 function change_music(music_file_name) {
     document.getElementById("myAudio").src =
         api_url + "resources/" + music_file_name;
@@ -27,16 +39,14 @@ function change_music(music_file_name) {
         document.getElementById("init_player_meta").innerHTML = data.title
         document.getElementById("music_player_data_title").innerHTML = data.title;
         document.getElementById("music_player_data_artist").innerHTML = data.artist;
-        document.getElementById("body").style.backgroundImage = `url("data:image/jpeg;base64,${cover_images}")`;
-        document.getElementById("music_player_data_cover").style.backgroundImage = `url("data:image/jpeg;base64,${cover_images}")`;
-        document.getElementById("init_player_cover").style.backgroundImage = `url("data:image/jpeg;base64,${cover_images}")`;
+        load_images(cover_images)
         lrc = data.lyrics;
         //load_lyrics();
         //document.getElementById('body').style.backgroundImage = "url('"+api_url+"cover/"+music_file_name+"')"
     });
 }
 function search_music() {
-    document.getElementById("search_event").innerHTML = "";
+    tempui = "";
     search_text = document.getElementById("search_input").value;
     axios({
         method: "post",
@@ -49,7 +59,7 @@ function search_music() {
         console.log(response);
         i = 0;
         while (response.data[i] !== undefined) {
-            document.getElementById("search_event").innerHTML +=
+            tempui +=
                 '<div id="music_search_event" onclick="change_music(\'' +
                 response.data[i].file +
                 "')\">" +
@@ -65,6 +75,13 @@ function search_music() {
                 "</div>";
             i++;
         }
+        tempui += `<div id="search_end">关键词 "${search_text}" 一共查询到${i}条结果`
+        if (i==100){
+            tempui += ` ( 超出 100 的结果将不会显示 ) `;
+        }
+        tempui += `</div>`
+        document.getElementById("search_event").innerHTML = tempui
+        
         console.log(i);
     });
 }
