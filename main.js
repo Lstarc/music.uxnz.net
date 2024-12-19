@@ -7,28 +7,6 @@ let search_list = [];
 let playlist = [];
 let playindex = 0;
 
-navigator.mediaSession.setActionHandler('previoustrack', function() {
-    // User clicked "Previous Track" media notification icon.
-    control_player_status('previous');
-});
-
-navigator.mediaSession.setActionHandler('nexttrack', function() {
-    // User clicked "Next Track" media notification icon.
-    control_player_status('next');
-});
-
-audio.onended = function () {
-    control_player_status('next');
-}
-
-document
-    .getElementById("search_input")
-    .addEventListener("keyup", function (event) {
-        if (event.key === "Enter") {
-            search_music();
-        }
-    });
-
 function control_player_status(option){
     if(option == 'next'){
         playindex = (playindex + 1 + playlist.length) % playlist.length;
@@ -47,7 +25,6 @@ function load_images(image_base64){
         return `url("data:image/png;base64,${image_base64}")`;
     }
 }
-window.onload = document.getElementById("body").style.backgroundImage = load_images("");
 
 function update_playlist(music_list){
     playlist = music_list;
