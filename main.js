@@ -67,6 +67,54 @@ function change_music(music_id) {
         //document.getElementById('body').style.backgroundImage = "url('"+api_url+"cover/"+music_file_name+"')"
     });
 }
+
+function change_kuwo_music(rid){
+    axios({
+        url:"https://music.api.uxnz.net:6/resources/kw",
+        method:"post",
+        data:{
+            "get_music":{
+                "rid":rid
+            }
+        }
+    }).then(function (response){
+        data = response.data;
+        if(data.get_music.code == 0){
+            playlist[0] = data.get_music.save.file;
+            change_music(0);
+        }
+    })
+}
+
+function search_kuwo_music(){
+    search_text = document.getElementById("search_input").value
+    axios({
+        method:"post",
+        url:"https://music.api.uxnz.net:6/resources/kw",
+        data:{
+            "search":{
+                "text":search_text
+            }
+        }
+    }).then(function (response){
+        data = response.data;
+        i = 0;
+        tempui = ``;
+        while (data['search'][i] !== undefined) {
+            search_list[i] = data.search[i].file
+            tempui += `
+                <div id="music_search_event" onclick="change_kuwo_music(${data.search[i].rid});">
+                    <div class="music_search_event_title"> ${data.search[i].title} </div>
+                    <div class="music_search_event_text"> ${data.search[i].album} </div>
+                    <div class="music_search_event_text"> ${data.search[i].artist} </div>
+                </div>
+            `;
+            i++;
+        }
+        document.getElementById("search_event").innerHTML = tempui
+    })
+}
+
 function search_music() {
     tempui = "";
     search_text = document.getElementById("search_input").value;
@@ -95,10 +143,13 @@ function search_music() {
         if (i==100){
             tempui += ` ( 超出 100 的结果将不会显示 ) `;
         }
+        tempui +=  `<a onclick="search_kuwo_music()">尝试kowo搜索</a>`
         tempui += `</div>`
         document.getElementById("search_event").innerHTML = tempui
     });
 }
+
+
 
 function control_player_page(option) {
     if (option == "close") {
