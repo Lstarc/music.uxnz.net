@@ -6,6 +6,8 @@ var containerHeight;
 var liHeight;
 var maxOffset;
 
+var lrc = "[0:0.0]\n[0:0.0]";
+
 /**
  * 解析歌词字符串
  * 得到一个歌词对象的数组
