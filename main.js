@@ -32,16 +32,20 @@ function getCookie(name) {
 
 function server_connect(request) {
     request['data']['token'] = getCookie("token");
-    return axios(request).then(function (response) {
-        if (response.data.token !== undefined) {
-            if (response.data.token.valid == false) {
-                setCookie("token", null, 0);
-                exchenge_ui_flex(null, "page_player");
-                exchenge_ui_flex("page_login", "page_home");
-            }
-        }
-
+    return axios(
+        request
+    ).then(function (response) {
         return response;
+    }).catch(error => {
+        if (error.response) {
+          // 请求已发送，服务器响应了状态码，且状态码不在 2xx 范围内
+          if (error.response.status === 403 && !error.response.data.token.valid) {
+            setCookie("token", null, 0);
+            exchenge_ui_flex(null, "page_player");
+            exchenge_ui_flex("page_login", "page_home");
+            throw new Error('token 过期'); 
+          }
+        }
     })
 }
 
@@ -67,6 +71,16 @@ function control_player_status(option) {
         playindex = (playindex - 1 + playlist.length) % playlist.length;
         change_music(playindex);
     }
+    if (option == 'pause'){
+        if(audio.paused){
+            audio.play();
+            document.getElementById("music_player_status_control_pause").innerHTML= "⏸";
+        }else{
+            audio.pause();
+            document.getElementById("music_player_status_control_pause").innerHTML= "▶";
+        }
+    }
+        
 }
 
 function load_images(image_base64) {
@@ -134,22 +148,25 @@ function change_music(music_id) {
     }) */
 
     audio.src = api_url + "resources/" + music_file_name + "?token=" + encodeURIComponent(getCookie("token"));
+    document.getElementById("music_player_status_control_pause").innerHTML= "⏸";
     audio.play();
-    
-    
+
+
 }
 
 function change_kuwo_music(rid) {
-    axios({
-        url: "https://music.api.uxnz.net:6/resources/kw",
+    server_connect({
+        url: "https://music.api.uxnz.net:6/",
         method: "post",
         data: {
-            "get_music": {
-                "rid": rid
+            "resources_kw": {
+                "get_music": {
+                    "rid": rid
+                }
             }
         }
     }).then(function (response) {
-        data = response.data;
+        data = response.data.resources_kw;
         if (data.get_music.code == 0) {
             playlist[0] = data.get_music.save.file;
             change_music(0);
@@ -159,28 +176,25 @@ function change_kuwo_music(rid) {
 
 function search_kuwo_music() {
     search_text = document.getElementById("search_input").value
-    axios({
+    server_connect({
         method: "post",
-        url: "https://music.api.uxnz.net:6/resources/kw",
+        url: "https://music.api.uxnz.net:6/",
         data: {
-            "search": {
-                "search_music": search_text
+            "resources_kw": {
+                "search": search_text
             }
         }
     }).then(function (response) {
-        data = response.data;
+        data = response.data.resources_kw;
         i = 0;
         tempui = ``;
         while (data['search'][i] !== undefined) {
             search_list[i] = data.search[i].file
             tempui += `
                 <div id="music_search_event" onclick="change_kuwo_music(${data.search[i].rid});">
-                    <div class="music_search_event_title"> ${data.search[i].title} </div>`;
-            if (targetPage == "desktop.html") {
-                tempui += `<div class="music_search_event_text"> ${data.search[i].album} </div>`;
-            }
-
-            tempui += `<div class="music_search_event_text"> ${data.search[i].artist} </div>
+                    <div class="music_search_event_title"> ${data.search[i].title} </div>
+                    <div class="music_search_event_text"> ${data.search[i].album} </div>
+                    <div class="music_search_event_text"> ${data.search[i].artist} </div>
                 </div>
             `;
             i++;
@@ -189,9 +203,10 @@ function search_kuwo_music() {
     })
 }
 
-function search_music() {
-    tempui = "";
-    search_text = document.getElementById("search_input").value;
+function search_music(){
+     text_search_music(document.getElementById("search_input").value);
+}
+function text_search_music(search_text) {
     server_connect({
         method: "post",
         url: api_url,
@@ -199,28 +214,33 @@ function search_music() {
             "search_music": search_text
         },
     }).then(function (response) {
-        console.log(response)
         const data = response.data.search_music;
         i = 0;
-        while (data[i] !== undefined) {
+        document.getElementById("search_text").innerHTML = `关键词 "${search_text}" 一共查询到${data.length}条结果`;
+        tempui = "";
+        while (i<data.length) {
             search_list[i] = data[i].file
+            if(data[i].thumbnail == ""){
+                img_url = `url('data:image/svg+xml;base64,${night_image_base64()}')`;
+            }else{
+                img_url = `url('data:image/jpeg;base64,${data[i].thumbnail}')`;
+            }
+
             tempui += `
                 <div id="music_search_event" onclick="update_playlist(search_list);change_music(${i});">
-                    <div class="music_search_event_title"> ${data[i].title} </div>`;
-            if (targetPage == "desktop.html") {
-                tempui += `<div class="music_search_event_text"> ${data[i].album} </div>`;
-            }
-            tempui += `<div class="music_search_event_text"> ${data[i].artist} </div>
+                    <div id="music_search_event_thumbnail" style="background-image: ${img_url}"></div>
+                    <div id="music_search_event_texts">
+                        <div class="music_search_event_title"> ${data[i].title} </div>
+                        <div class="music_search_event_text">
+                            <div> ${data[i].album} </div>
+                            <div> ${data[i].artist} </div>
+                        </div>
+                    </div>
                 </div>
             `;
             i++;
         }
-        tempui += `<div id="search_end">关键词 "${search_text}" 一共查询到${i}条结果`
-        if (i == 100) {
-            tempui += ` ( 超出 100 的结果将不会显示 ) `;
-        }
-        tempui += `<a onclick="search_kuwo_music()">尝试kowo搜索</a>`
-        tempui += `</div>`
+        
         document.getElementById("search_event").innerHTML = tempui
     });
 }
@@ -235,18 +255,6 @@ function control_player_page(option) {
     if (option == "open") {
         document.getElementById("page_player").style.display = "flex";
         document.getElementById("page_home").style.display = "none";
-        load_lyrics();
-    }
-}
-
-function exchenge_lyrics_exec(option) {
-    if (option == "close") {
-        document.getElementById("music_player_lyrics").style.display = "none";
-        document.getElementById("music_player_meta").style.display = "flex";
-    }
-    if (option == "open") {
-        document.getElementById("music_player_lyrics").style.display = "flex";
-        document.getElementById("music_player_meta").style.display = "none";
         load_lyrics();
     }
 }
@@ -275,8 +283,22 @@ function login() {
         if (data.code == 0) {
             setCookie("token", data.token, 7200);
             exchenge_ui_flex("page_home", "page_login");
+            ui_load('box','recommendation');
         } else if (data.code == 1) {
             alert(data.msg);
         }
     })
+}
+
+function handleResize() {
+    // 获取当前窗口的宽度
+    const windowWidth = window.innerWidth;
+
+    if (windowWidth < 750) {
+        // 当窗口宽度小于阈值时修改 CSS 属性
+        document.getElementById("panel").style.width = '50px';
+    } else {
+        // 当窗口宽度大于等于阈值时恢复初始样式
+        document.getElementById("panel").style.width = '200px';
+    }
 }
