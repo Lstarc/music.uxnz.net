@@ -106,13 +106,18 @@ body {
 }
 #music_player_status_control{
     display: flex;
+    align-items: center;
 }
-#music_player_status_control div{
+#music_player_status_control i{
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    border: 2px solid black;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px;
+    margin-left: 40px;
     font-size: 38px;
 }
 #page_home {

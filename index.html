@@ -7,7 +7,7 @@
     <title>music</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
-    <script  src="ui.js"></script>
+    <script src="ui.js"></script>
     <script src="axios.min.js"></script>
     <script src="night.svg.base64.js"></script>
     <script src="lyrics.js"></script>
@@ -41,9 +41,9 @@
         <div id="init_player">
                 <div id="init_player_cover" onclick="control_player_page('open')"></div>
                 <div id="music_player_status_control">
-                    <div onclick="control_player_status('previous');">⏮</div>
-                    <div id="music_player_status_control_pause" onclick="control_player_status('pause');">▶</div>
-                    <div onclick="control_player_status('next');">⏭</div>
+                    <i onclick="control_player_status('previous');" class="fa-solid fa-backward-step"></i>
+                    <i id="music_player_status_control_pause" onclick="control_player_status('auto');" class="fa-solid fa-play"></i>
+                    <i onclick="control_player_status('next');" class="fa-solid fa-forward-step"></i>
                 </div>
                 <div id="init_player_meta">歌曲</div>
         </div>

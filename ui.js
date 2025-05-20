@@ -27,9 +27,8 @@ function ui_load(ui_class, ui_box) {
             });
         }
         if(ui_box == "recommendation"){
-            text_search_music(' ');
+            text_search_music(' ',true);
         }
     }
-
 }
 

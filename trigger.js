@@ -1,5 +1,6 @@
 function init() {
     loadStyle("light.css");
+    loadStyle("all.min.css");
 
     audio = document.getElementById('myAudio');
 

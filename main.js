@@ -72,12 +72,24 @@ function control_player_status(option) {
         change_music(playindex);
     }
     if (option == 'pause'){
+        audio.pause();
+        document.getElementById("music_player_status_control_pause").classList.remove("fa-pause");
+        document.getElementById("music_player_status_control_pause").classList.add("fa-play");
+    }
+    if (option == 'play'){
+        audio.play();
+        document.getElementById("music_player_status_control_pause").classList.remove("fa-play");
+        document.getElementById("music_player_status_control_pause").classList.add("fa-pause");
+    }
+    if (option == 'auto'){
         if(audio.paused){
             audio.play();
-            document.getElementById("music_player_status_control_pause").innerHTML= "⏸";
+            document.getElementById("music_player_status_control_pause").classList.remove("fa-play");
+            document.getElementById("music_player_status_control_pause").classList.add("fa-pause");
         }else{
             audio.pause();
-            document.getElementById("music_player_status_control_pause").innerHTML= "▶";
+            document.getElementById("music_player_status_control_pause").classList.remove("fa-pause");
+            document.getElementById("music_player_status_control_pause").classList.add("fa-play");
         }
     }
         
@@ -91,13 +103,13 @@ function load_images(image_base64) {
     }
 }
 
-function update_playlist(music_list) {
-    playlist = music_list;
+function add_search_music_to_playlist(music_id){
+    playlist.splice(playindex+1, 0, search_list[music_id]);
+    control_player_status('next');
 }
 
 function change_music(music_id) {
-
-    playindex = music_id;
+    
     music_file_name = playlist[music_id];
 
     server_connect({
@@ -148,8 +160,7 @@ function change_music(music_id) {
     }) */
 
     audio.src = api_url + "resources/" + music_file_name + "?token=" + encodeURIComponent(getCookie("token"));
-    document.getElementById("music_player_status_control_pause").innerHTML= "⏸";
-    audio.play();
+    control_player_status('play');
 
 
 }
@@ -168,8 +179,10 @@ function change_kuwo_music(rid) {
     }).then(function (response) {
         data = response.data.resources_kw;
         if (data.get_music.code == 0) {
-            playlist[0] = data.get_music.save.file;
-            change_music(0);
+            playlist.splice(playindex+1, 0, data.get_music.save.file);
+            control_player_status('next');
+        }else{
+            alert(data.get_music.message);
         }
     })
 }
@@ -189,12 +202,13 @@ function search_kuwo_music() {
         i = 0;
         tempui = ``;
         while (data['search'][i] !== undefined) {
-            search_list[i] = data.search[i].file
             tempui += `
                 <div id="music_search_event" onclick="change_kuwo_music(${data.search[i].rid});">
-                    <div class="music_search_event_title"> ${data.search[i].title} </div>
-                    <div class="music_search_event_text"> ${data.search[i].album} </div>
-                    <div class="music_search_event_text"> ${data.search[i].artist} </div>
+                    <div id="music_search_event_texts">
+                        <div class="music_search_event_title"> ${data.search[i].title} </div>
+                        <div class="music_search_event_text"> ${data.search[i].album} </div>
+                        <div class="music_search_event_text"> ${data.search[i].artist} </div>
+                    </div>
                 </div>
             `;
             i++;
@@ -204,9 +218,9 @@ function search_kuwo_music() {
 }
 
 function search_music(){
-     text_search_music(document.getElementById("search_input").value);
+     return text_search_music(document.getElementById("search_input").value);
 }
-function text_search_music(search_text) {
+function text_search_music(search_text,update=false) {
     server_connect({
         method: "post",
         url: api_url,
@@ -227,7 +241,7 @@ function text_search_music(search_text) {
             }
 
             tempui += `
-                <div id="music_search_event" onclick="update_playlist(search_list);change_music(${i});">
+                <div id="music_search_event" onclick="add_search_music_to_playlist(${i});">
                     <div id="music_search_event_thumbnail" style="background-image: ${img_url}"></div>
                     <div id="music_search_event_texts">
                         <div class="music_search_event_title"> ${data[i].title} </div>
@@ -239,6 +253,9 @@ function text_search_music(search_text) {
                 </div>
             `;
             i++;
+        }
+        if(update){
+            playlist = search_list;
         }
         
         document.getElementById("search_event").innerHTML = tempui
